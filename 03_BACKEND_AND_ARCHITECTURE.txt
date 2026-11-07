@@ -1,0 +1,93 @@
+TASKWEAVE — BACKEND AND SYSTEM ARCHITECTURE
+WHAT HAPPENS BEHIND THE SCENES
+
+1. HIGH-LEVEL REQUEST FLOW
+Browser (HTML/CSS/JavaScript)
+    -> Django URL routing
+    -> Django view validates the request
+    -> Planner service calls Groq
+    -> Planner validates AI JSON
+    -> Pricing service reads Agent prices from SQLite
+    -> TaskPlan is saved in SQLite as DRAFT
+    -> User approves the plan
+    -> PayPal order is created from the saved quote
+    -> User approves checkout at PayPal Sandbox
+    -> TASKWEAVE retrieves and verifies the PayPal order
+    -> Backend captures the approved order and verifies capture amount/currency
+    -> Payment is marked CAPTURED
+    -> Executor calls Groq once for each unpaid/incomplete task
+    -> Markdown deliverables and task status are saved in TaskPlan.tasks
+    -> Download endpoint returns completed Markdown files
+
+2. DJANGO APPLICATION STRUCTURE
+- taskweave/settings.py: Django settings, installed application configuration, database and environment configuration.
+- taskweave/urls.py: root URL routing into the agents application.
+- agents/models.py: Agent, TaskPlan and Payment database models.
+- agents/views.py: homepage, workspace, agent listing, plan generation, approval, payment, PayPal return/cancel, task execution and download endpoints.
+- agents/urls.py: application URL patterns.
+- agents/services/groq_client.py: Groq API client wrapper.
+- agents/services/planner.py: prompt construction, JSON parsing, plan validation, requirement coverage validation, budget check, and plan persistence.
+- agents/services/pricing.py: deterministic price lookup and total calculation.
+- agents/services/paypal_orders.py: PayPal order creation and return/cancel URLs.
+- agents/services/paypal_client.py: PayPal OAuth token retrieval, order lookup and capture API calls.
+- agents/services/executor.py: Groq-powered task deliverable generation.
+- agents/management/commands/seed_agents.py: inserts or updates the three demonstration specialist agents.
+- agents/templates/agents/: homepage, workspace and payment-result templates.
+- agents/static/agents/: CSS and JavaScript for the user interface.
+
+3. DATABASE MODELS
+Agent:
+- name, description, capability, price, is_active, created_at.
+- Active agents are offered to the planner and their database prices are used for quotes.
+
+TaskPlan:
+- user_request: combined project title and description.
+- project_summary: AI-generated summary.
+- tasks: JSON data containing task number, assigned agent, description, expected deliverable, requirement mapping, calculated price/currency, and later execution status/deliverable/error fields.
+- total_cost and currency: server-calculated quote.
+- status: DRAFT, APPROVED, or REJECTED.
+- created_at.
+
+Payment:
+- plan: foreign key to TaskPlan.
+- paypal_order_id: unique PayPal order identifier.
+- amount and currency: quote saved when the payment record is created.
+- status: CREATED, APPROVED, CAPTURED, or FAILED (the current flow primarily uses CREATED, CAPTURED and FAILED).
+- capture_id, created_at and updated_at.
+
+4. PLAN GENERATION
+The generate_plan endpoint accepts a JSON request containing title, description and optional budget. It validates input types, required fields and length. The server fetches active agents from the database and passes their names, descriptions and capabilities to the planner.
+
+The planner sends Groq a prompt requesting:
+- project summary;
+- requirement IDs and descriptions;
+- between 3 and 10 tasks;
+- exact available agent names;
+- task descriptions;
+- expected deliverables;
+- requirement IDs covered by each task.
+
+The planner parses the JSON and validates its structure. It rejects duplicate requirement IDs/task numbers, unknown agents, missing descriptions/deliverables, invalid requirement references, and requirements not mapped to any task. It then calls the pricing service and checks the optional budget. A successful plan is saved with DRAFT status.
+
+Important: the coverage check validates IDs and mapping structure. It does not independently understand whether a task genuinely satisfies a requirement. Human review remains necessary.
+
+5. PRICING AND TRUST BOUNDARY
+The pricing service queries active Agent rows and builds an agent-name-to-price mapping. For every task, it finds the assigned agent's current database price, adds it to the total, and adds price/currency fields to that task. Unknown or inactive agents are rejected. AI-provided prices are not used.
+
+The quote is saved in TaskPlan. PayPal order creation uses that saved quote, not a price submitted by the browser. After capture, the backend checks the PayPal order/capture status and compares the capture currency and amount with the saved Payment record.
+
+6. APPROVAL AND PAYMENT
+The user first approves the plan. The create-payment endpoint refuses a plan that is not APPROVED and refuses to create another payment if a CAPTURED payment already exists. It may reuse an existing open PayPal order. PayPal return handling retrieves the order from PayPal. If the order is APPROVED, TASKWEAVE calls the capture endpoint. If PayPal reports COMPLETED, TASKWEAVE inspects the capture. A completed capture with matching amount and currency marks the Payment record CAPTURED.
+
+The browser redirect is not trusted as payment proof. The server queries PayPal. The current implementation has no webhook reconciliation, so production payment reliability is incomplete.
+
+7. TASK EXECUTION
+The execute endpoint checks that the plan is APPROVED and that a Payment record with CAPTURED status exists. It iterates through the plan's tasks. A task already marked COMPLETED with a deliverable is skipped. Other tasks are marked RUNNING, sent to execute_task(), then saved as COMPLETED with a deliverable or FAILED with an error message.
+
+execute_task() constructs a prompt using the assigned agent name, project title/request, task description, expected deliverable and requirement IDs. Groq returns Markdown text. This is text generation, not execution of generated code or invocation of specialist tools. The endpoint runs synchronously and can time out for long plans.
+
+8. DELIVERABLE DOWNLOAD
+The download endpoint requires a captured payment and a task with COMPLETED status and non-empty deliverable. It returns the content as a Markdown attachment (.md). The deliverable is stored inside the task JSON in the database; it is not a separately managed file or artifact repository.
+
+9. IMPORTANT SECURITY LIMITATIONS
+The current prototype has no user authentication, user-to-plan ownership checks, or role-based authorization. Payment/plan endpoints should not be exposed publicly without adding these controls. A production design should also add CSRF and endpoint review, rate limiting, request validation hardening, secure environment settings, durable background jobs, webhook signature verification/reconciliation, idempotency and concurrency controls, audit logs, and automated tests.

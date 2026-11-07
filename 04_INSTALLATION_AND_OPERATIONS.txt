@@ -1,0 +1,94 @@
+TASKWEAVE — INSTALLATION AND OPERATIONS
+WINDOWS / POWERSHELL
+
+1. SOFTWARE REQUIREMENTS
+- Windows 10/11.
+- Python 3.11 or newer (use a compatible Python installation).
+- VS Code or another editor.
+- Internet access.
+- Groq API key.
+- PayPal Developer account with Sandbox REST app, Sandbox Business merchant and Sandbox Personal buyer.
+
+2. EXTRACT AND OPEN
+Extract TASKWEAVE_COMPLETE.zip into a new folder. Open the extracted TASKWEAVE folder in VS Code. Open Terminal > New Terminal and confirm the terminal is in the folder containing manage.py and requirements.txt.
+
+3. CREATE AND ACTIVATE VIRTUAL ENVIRONMENT
+Create it once:
+    py -m venv .venv
+
+Activate in PowerShell:
+    .\.venv\Scripts\Activate.ps1
+
+If PowerShell blocks activation, allow scripts only for the current terminal process:
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    .\.venv\Scripts\Activate.ps1
+
+The terminal prompt should show (.venv). In a new terminal, activate it again.
+
+4. INSTALL DEPENDENCIES
+    python -m pip install --upgrade pip
+    python -m pip install -r requirements.txt
+
+5. CONFIGURE ENVIRONMENT VARIABLES
+Create the local environment file:
+    Copy-Item .env.example .env
+
+Open .env and set the values using your own credentials. Required settings include:
+- GROQ_API_KEY: Groq API key.
+- PAYPAL_CLIENT_ID: PayPal Sandbox REST app client ID.
+- PAYPAL_CLIENT_SECRET: matching PayPal Sandbox secret.
+- DJANGO_SECRET_KEY: a long random Django secret key.
+- DEBUG: True for local development only; False for a properly configured deployment.
+- ALLOWED_HOSTS: hostnames allowed by Django for the environment.
+- PAYPAL_BASE_URL: Sandbox API base URL for local testing, as documented in .env.example.
+
+Never paste credentials into source code, screenshots, chat messages, or GitHub. Never commit .env. If a credential was previously included in a shared archive or public repository, rotate it.
+
+6. DATABASE AND DEMO AGENTS
+Run:
+    python manage.py check
+    python manage.py makemigrations --check --dry-run
+    python manage.py migrate
+    python manage.py seed_agents
+
+Create an admin account if needed:
+    python manage.py createsuperuser
+
+7. START THE SERVER
+    python manage.py runserver
+
+Open:
+    http://127.0.0.1:8000/
+
+Workspace:
+    http://127.0.0.1:8000/workspace/
+
+Django admin:
+    http://127.0.0.1:8000/admin/
+
+Stop the server with Ctrl+C.
+
+8. USE THE DJANGO ADMIN
+Log in at /admin/ using the superuser credentials. Inspect or manage Agent, TaskPlan and Payment records. Agent names and prices affect future quotes. Do not change prices during an active quote/payment flow unless you understand the consequences.
+
+9. BASIC LOCAL CHECKS
+Run these commands from the project folder with .venv active:
+    python manage.py check
+    python manage.py makemigrations --check --dry-run
+    python manage.py test
+
+The test suite in this prototype is minimal and does not establish that the entire payment/execution workflow works. Manually test the full workflow with Sandbox accounts.
+
+10. COMMON ISSUES
+- No module named dotenv: activate the project's .venv and run `python -m pip install -r requirements.txt`.
+- Groq authentication failure: check GROQ_API_KEY in .env; restart Django after changing .env. Never expose the key.
+- Groq rate limit or model error: inspect the Django terminal output; wait or check Groq account/model availability.
+- No active specialist agents: run `python manage.py seed_agents` and inspect Agent records in /admin/.
+- Plan exceeds budget: increase the budget or revise the project scope. Price is calculated from the database, per task.
+- PayPal PAYER_ACTION_REQUIRED: complete buyer approval using the same order's payer-action URL. Then allow TASKWEAVE's return flow to verify/capture it. Do not infer success from the buyer activity page alone.
+- Payment mismatch: do not execute tasks. Inspect the saved Payment amount/currency and PayPal Sandbox order/capture details.
+- Static files appear stale: hard refresh the browser with Ctrl+Shift+R and confirm the static files are linked in the templates.
+- PowerShell activation blocked: use the process-scoped execution policy command in section 3.
+
+11. PUBLIC DEPLOYMENT WARNING
+Do not deploy this unmodified prototype as an open public service. Add authentication, plan ownership, secure production settings, HTTPS, allowed-host configuration, persistent production database, background job processing, webhook reconciliation, rate limiting, monitoring, and a complete test suite first. PayPal Sandbox credentials are for testing only.

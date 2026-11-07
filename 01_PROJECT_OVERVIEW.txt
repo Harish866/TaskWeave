@@ -1,0 +1,44 @@
+TASKWEAVE — AI AGENT ECONOMY
+PROJECT OVERVIEW
+Documentation version: 1.0
+
+1. WHAT IS TASKWEAVE?
+TASKWEAVE is a web-based prototype that turns a user's project brief into a structured, priced workflow. The user describes a project. An AI planner identifies requirements, divides the work into tasks, and assigns available specialist agents. The Django backend validates the assignments and calculates the quote from agent prices stored in its database. The user reviews and approves the plan, pays through PayPal Sandbox, and—after the backend verifies the payment capture—can request AI-generated task deliverables.
+
+TASKWEAVE is intended to demonstrate an AI-assisted agent marketplace workflow. It is not itself a finished marketplace with autonomous software engineers, external tools, or real-world service providers.
+
+2. THE PROBLEM IT ADDRESSES
+A person with an idea may not know how to break it into manageable work, which specialist skills are needed, or how much a proposed workflow should cost. TASKWEAVE demonstrates a process for translating a project brief into requirements, tasks, specialist assignments, and a transparent quote before checkout.
+
+3. CORE VALUE PROPOSITION
+- Convert a natural-language project brief into a structured plan.
+- Identify requirements and map tasks to those requirements.
+- Assign tasks to a configured set of specialist agents.
+- Calculate prices on the server from database records rather than trusting AI-generated prices.
+- Let the user review and approve a plan before checkout.
+- Use PayPal Sandbox to demonstrate checkout and server-side capture verification.
+- Generate text/Markdown deliverables for paid tasks and make completed deliverables downloadable.
+
+4. TECHNOLOGY STACK
+- Python and Django: web application, backend endpoints, database models, validation, payment workflow.
+- SQLite: local development database.
+- Groq API with model openai/gpt-oss-120b: requirement-based planning and text deliverable generation.
+- PayPal Orders v2 API in Sandbox mode: checkout, order lookup, and capture.
+- HTML, CSS and JavaScript: browser interface and workspace interactions.
+
+5. SPECIALIST AGENTS IN THE DEMO
+The seed command configures these example specialists:
+- Data Analyst — data analysis — USD 5.00 per assigned task.
+- Visualization Specialist — data visualization — USD 3.00 per assigned task.
+- Report Writer — report generation — USD 4.00 per assigned task.
+
+These are configured demo roles, not separate deployed AI models or independent external workers. The executor currently calls the Groq model with the assigned specialist role in its prompt.
+
+6. IMPORTANT PRICING RULE
+The AI proposes task descriptions and agent names. It does not determine the final price. The backend looks up each assigned active agent's price in the Agent database table and adds that price once for each task. Therefore, if an agent is assigned three tasks, that agent's configured price is charged three times. The optional budget is checked against this server-calculated total.
+
+7. PAYMENT BOUNDARY
+This project is configured for PayPal Sandbox testing. It must not be described as accepting real customer payments. The backend uses the saved plan quote to create the order and verifies the PayPal order/capture before marking a payment as captured. A successful browser redirect alone is not proof of payment.
+
+8. CURRENT PROTOTYPE BOUNDARIES
+Task execution generates text/Markdown content using Groq. It does not run generated code, access a user's private databases, create and deploy a complete application, call specialist external tools, or autonomously deliver a production system. Execution is synchronous in a web request. There is no user login or project ownership enforcement, no durable job queue, no webhook reconciliation, and no complete automated end-to-end test suite. Keep the prototype local or behind access controls. Do not use real payment credentials or real customer data.

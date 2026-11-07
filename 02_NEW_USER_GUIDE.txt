@@ -1,0 +1,61 @@
+TASKWEAVE — NEW USER GUIDE
+HOW TO USE THE APPLICATION
+
+A. WHAT A NEW USER DOES
+1. Open the TASKWEAVE homepage in a browser.
+2. Open the Workspace.
+3. Enter a short project title.
+4. Describe the project in plain language. Include the features, users, outputs, constraints, and important requirements. The description field has a 5,000-character limit.
+5. Optionally enter a maximum budget in USD. The backend accepts a positive amount up to USD 1,000,000. If no budget is supplied, no budget ceiling is applied.
+6. Select Generate Plan.
+7. Review the project summary, requirements, task breakdown, agent assignments, deliverables, and calculated quote.
+8. If the plan is incomplete or unsuitable, do not approve it. Edit the project brief and generate another plan.
+9. If satisfied, choose Approve Plan. Approval means the user accepts the proposed scope and quote; it does not mean payment has happened.
+10. Continue to PayPal Sandbox. Sign in using a PayPal Sandbox Personal buyer account and complete the test checkout.
+11. TASKWEAVE receives the PayPal return and asks PayPal for the order status. The backend captures an approved order and checks that the capture is completed and that the captured currency and amount match the saved quote.
+12. Only after a verified capture should the workspace allow the user to execute paid tasks.
+13. Select Execute Paid Tasks. TASKWEAVE sends each task to the Groq-powered specialist executor. The result is saved as Markdown text in the task record.
+14. Download each completed deliverable from the workspace.
+
+B. HOW TO WRITE A GOOD PROJECT BRIEF
+A useful brief should state:
+- Project name and purpose.
+- Intended users.
+- Required features and workflows.
+- Data that must be stored or processed.
+- Reports, charts, files, or other expected outputs.
+- Platforms or technologies, if known.
+- Security, accessibility, performance, or deployment requirements.
+- Constraints such as budget or deadline.
+
+Example brief:
+"Build a Student Attendance Management System for a college. Faculty should manage student records and mark attendance as Present, Absent, or Late for each class. Provide student and class-level monthly reports, a dashboard with attendance totals and percentages, and charts showing trends. Store student and attendance records in a database. Include faculty login, role permissions, validation, responsive desktop/mobile screens, and tests. List the deliverables for each development task."
+
+C. UNDERSTANDING THE PLAN
+- Requirement: one need identified from the user's brief, assigned an ID such as R1.
+- Task: a unit of work proposed by the planner.
+- Specialist agent: the configured role assigned to a task.
+- Expected deliverable: the output the task is expected to produce.
+- Requirement mapping: the requirement IDs that a task is intended to cover.
+- Quote: the total calculated from the database price of each assigned task.
+
+Requirement coverage validation checks that every identified requirement ID appears in at least one task. This is a structural check, not proof that the plan is technically complete or correct. A human should still review the scope and deliverables.
+
+D. UNDERSTANDING THE PAYMENT STATES
+- Draft plan: generated but not yet approved.
+- Approved plan: user accepted the plan; payment is still required.
+- Created payment: a PayPal Sandbox order has been created.
+- Captured payment: the backend verified a completed PayPal capture and matched amount/currency to the saved quote.
+- Rejected plan: user declined the draft.
+
+If PayPal shows PAYER_ACTION_REQUIRED, complete buyer approval using the same order's PayPal buyer-action link. Do not assume payment succeeded merely because a transaction appears in a buyer account's activity. TASKWEAVE requires the order/capture verification to succeed.
+
+E. WHAT THE USER RECEIVES
+For each successfully executed task, the current prototype can return a Markdown deliverable containing written analysis, specifications, report content, tables, or code text as appropriate to the task prompt. It is not guaranteed to be a tested software artifact or a deployed application. Review and validate generated content before using it in a real project.
+
+F. IMPORTANT SAFETY AND USAGE NOTES
+- This is a hackathon prototype. Do not enter confidential, regulated, or sensitive personal data.
+- Use PayPal Sandbox buyer and merchant accounts only.
+- Do not share API keys, client secrets, passwords, or .env files.
+- There is currently no user authentication or plan ownership model. Anyone who can access the instance may be able to interact with plan endpoints. Do not expose an unrestricted public instance.
+- Do not refresh/retry payment or execution blindly if a request appears stuck. Check the saved plan/payment status and server logs first.

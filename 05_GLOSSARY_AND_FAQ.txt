@@ -1,0 +1,60 @@
+TASKWEAVE — GLOSSARY, FAQ AND DEMONSTRATION SCRIPT
+
+GLOSSARY
+AI planner: Groq-powered component that converts the user's project brief into requirements and tasks.
+Agent: A configured specialist role with a name, capability, description and database price.
+Requirement: A distinct feature or constraint extracted from the project brief.
+Requirement coverage: Mapping of each requirement ID to one or more tasks. Structural mapping does not guarantee semantic completeness.
+Task: A unit of work assigned to a specialist role.
+Deliverable: The text/Markdown output generated for a task.
+Quote: Total of the configured agent price charged for every task assigned.
+Draft: A generated plan awaiting the user's decision.
+Approved: A plan accepted by the user. Payment is not implied.
+PayPal Sandbox: PayPal's test environment; it does not move real money.
+Capture: The payment operation that finalizes an approved PayPal order. TASKWEAVE verifies the completed capture server-side.
+
+FREQUENTLY ASKED QUESTIONS
+
+Q: Is TASKWEAVE a general-purpose AI agent marketplace?
+A: It is a prototype demonstrating the workflow of project planning, specialist-role assignment, pricing, checkout and AI-generated text deliverables. It is not a production marketplace with independent agents or external specialist tools.
+
+Q: Are the agents separate AI systems?
+A: No. They are specialist roles stored in the database. The current executor uses the same configured Groq model and changes the task prompt according to the assigned role.
+
+Q: Does Groq decide the price?
+A: No. The backend retrieves each assigned agent's price from the Agent table and calculates the quote.
+
+Q: What happens if the quote exceeds the budget?
+A: The planner raises a validation error and does not save that generated plan as a successful draft.
+
+Q: Does plan approval charge the user?
+A: No. Plan approval and PayPal checkout are separate actions.
+
+Q: Is the payment real?
+A: No. This project is configured for PayPal Sandbox. Use test buyer and merchant accounts only.
+
+Q: Does a successful PayPal redirect prove payment?
+A: No. TASKWEAVE must retrieve the order and verify a completed capture with the saved amount and currency.
+
+Q: Does TASKWEAVE build and deploy the requested software?
+A: Not currently. It generates Markdown work products such as specifications, analysis, report text or code text. It does not run generated code, connect to a user's databases, or deploy applications.
+
+Q: Can users download outputs?
+A: Yes. Completed task deliverables can be downloaded as Markdown (.md) files after verified payment.
+
+Q: Can a new user create a private account?
+A: Not in the current prototype. There is no user authentication or project ownership model. Keep the demo local or restrict access.
+
+Q: Can it handle a long project?
+A: Task execution currently runs synchronously in a web request. Long tasks or many tasks may exceed server timeouts. Production requires a background worker/queue.
+
+SUGGESTED DEMO SCRIPT (UNDER 3 MINUTES)
+1. Introduce TASKWEAVE as an AI-assisted project-to-workflow and quote prototype.
+2. Submit a realistic project brief with clear requirements.
+3. Show the AI-generated requirement list, task breakdown, specialist assignments and expected deliverables.
+4. Explain that prices are calculated by Django from database agent prices, not invented by the model.
+5. Show the budget check and plan approval step.
+6. Demonstrate PayPal Sandbox checkout with test accounts, if the environment is working.
+7. Show the server-verified capture status.
+8. Execute paid tasks and open a generated Markdown deliverable.
+9. State the current prototype boundary honestly: text deliverables, not autonomous code execution/deployment; Sandbox only; authentication and production hardening remain future work.
