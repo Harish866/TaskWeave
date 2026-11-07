@@ -2,6 +2,11 @@
 __pycache__/
 *.py[codz]
 *$py.class
+staticfiles/
+.pytest_cache/
+.coverage
+.vscode/
+.idea/
 
 # C extensions
 *.so
