@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment status | TASKWEAVE</title>
+    <link rel="stylesheet" href="{% static 'agents/css/style.css' %}">
+</head>
+<body class="workspace-body">
+    <main style="max-width:720px;margin:12vh auto;padding:32px 24px;text-align:center;">
+        <a href="/" class="logo">TASK<span>WEAVE</span><span class="logo-dot">.</span></a>
+        <div style="margin-top:50px;padding:36px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#111725;">
+            <div style="font-size:42px;">{% if success %}✓{% else %}ⓘ{% endif %}</div>
+            <h1 style="margin:18px 0;">{% if success %}Payment verified{% else %}Payment not completed{% endif %}</h1>
+            <p style="color:#aab4c5;line-height:1.8;">{{ message }}</p>
+            {% if success %}
+                <p style="margin-top:18px;color:#55d6e8;">{{ currency }} {{ amount }}</p>
+                <p style="margin-top:10px;color:#aab4c5;font-size:13px;">Plan #{{ plan_id }} · PayPal Sandbox</p>
+                <form id="executeForm" method="post" action="/plans/{{ plan_id }}/execute/" style="margin-top:24px;">
+                    {% csrf_token %}
+                    <button type="submit" class="primary-button">Execute paid tasks</button>
+                </form>
+                <div id="executionResult" style="text-align:left;margin-top:20px;"></div>
+                <script>
+                document.getElementById("executeForm").addEventListener("submit", async function(event) {
+                    event.preventDefault();
+                    const button = this.querySelector("button");
+                    const output = document.getElementById("executionResult");
+                    button.disabled = true;
+                    button.textContent = "Executing specialist tasks...";
+                    output.textContent = "Execution may take a few minutes. Keep this page open.";
+                    try {
+                        const response = await fetch(this.action, {method:"POST", headers:{"X-CSRFToken":this.querySelector("[name=csrfmiddlewaretoken]").value}});
+                        const data = await response.json();
+                        if (!response.ok) throw new Error(data.error || "Execution failed.");
+                        output.replaceChildren();
+                        const heading = document.createElement("h2");
+                        heading.textContent = `Execution: ${data.completed_tasks}/${data.total_tasks} tasks completed`;
+                        output.appendChild(heading);
+                        data.tasks.forEach(task => {
+                            const item = document.createElement("p");
+                            item.textContent = `Task ${task.task_number}: ${task.status}`;
+                            output.appendChild(item);
+                            if (task.status === "COMPLETED") {
+                                const link = document.createElement("a");
+                                link.href = `/plans/{{ plan_id }}/tasks/${task.task_number}/download/`;
+                                link.textContent = `Download task ${task.task_number} deliverable`;
+                                link.style.display = "block";
+                                output.appendChild(link);
+                            } else if (task.error) {
+                                const error = document.createElement("p");
+                                error.textContent = task.error;
+                                output.appendChild(error);
+                            }
+                        });
+                        button.textContent = data.status === "COMPLETED" ? "Execution completed" : "Retry failed tasks";
+                        button.disabled = data.status === "COMPLETED";
+                    } catch (error) {
+                        output.textContent = error.message;
+                        button.disabled = false;
+                        button.textContent = "Retry execution";
+                    }
+                });
+                </script>
+            {% endif %}
+            <a href="/workspace/" class="primary-button" style="display:inline-block;margin-top:28px;">Return to workspace</a>
+        </div>
+        <p style="color:#8490a3;font-size:12px;margin-top:24px;">Sandbox test transaction only. No real money was transferred.</p>
+    </main>
+</body>
+</html>

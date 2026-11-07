@@ -1,0 +1,286 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TASKWEAVE — AI Agent Economy</title>
+    <meta name="description" content="Build, delegate and execute projects with specialist AI agents through TASKWEAVE.">
+
+    <link rel="stylesheet" href="{% static 'agents/css/style.css' %}">
+    <script src="{% static 'agents/js/theme.js' %}" defer></script>
+    <script src="{% static 'agents/js/app.js' %}" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="#" class="logo">TASK<span>WEAVE</span><span class="logo-dot">.</span></a>
+
+        <nav class="nav-links">
+            <a href="#marketplace">Marketplace</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">☾ Dark mode</button>
+            <a href="/workspace/" class="nav-button">Launch Workspace ↗</a>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero" id="about">
+
+            <div class="hero-content">
+
+                <div class="status-label">
+                    <span class="status-dot"></span>
+                    THE AI AGENT ECONOMY
+                </div>
+
+                <h1>
+                    Your work.<br>
+                    <span class="gradient-text">A network of minds.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Don't just use AI. Build a team of specialist AI agents.
+                    Delegate complex projects, coordinate intelligent workflows
+                    and get results — all in one workspace.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="/workspace/" class="primary-button">
+                        Start a Project <span>↗</span>
+                    </a>
+
+                    <a href="#marketplace" class="secondary-button">
+                        Explore Agents
+                    </a>
+                </div>
+
+                <div class="hero-note">
+                    <span>✦</span> One request. Multiple specialists. One result.
+                </div>
+
+            </div>
+
+            <div class="hero-visual">
+
+                <div class="visual-glow"></div>
+
+                <div class="network-card">
+
+                    <div class="network-header">
+                        <span>WORKFLOW OVERVIEW</span>
+                        <span class="live-indicator">● LIVE PREVIEW</span>
+                    </div>
+
+                    <div class="user-node">
+                        <div class="node-icon">✦</div>
+                        <div>
+                            <strong>Your Project</strong>
+                            <small>Analyze business performance</small>
+                        </div>
+                        <span class="node-tag">INPUT</span>
+                    </div>
+
+                    <div class="connection-line"></div>
+
+                    <div class="planner-node">
+                        <div class="planner-icon">◈</div>
+                        <div>
+                            <strong>AI Orchestrator</strong>
+                            <small>Breaking project into tasks</small>
+                        </div>
+                        <span class="node-tag">PLANNER</span>
+                    </div>
+
+                    <div class="branch-lines">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="agent-nodes">
+
+                        <div class="agent-node">
+                            <div class="agent-avatar analyst">DA</div>
+                            <strong>Data Analyst</strong>
+                            <small>Data processing</small>
+                            <span class="agent-price">$5.00</span>
+                        </div>
+
+                        <div class="agent-node">
+                            <div class="agent-avatar visualizer">VS</div>
+                            <strong>Visualizer</strong>
+                            <small>Charts & graphs</small>
+                            <span class="agent-price">$3.00</span>
+                        </div>
+
+                        <div class="agent-node">
+                            <div class="agent-avatar writer">RW</div>
+                            <strong>Report Writer</strong>
+                            <small>Final report</small>
+                            <span class="agent-price">$4.00</span>
+                        </div>
+
+                    </div>
+
+                    <div class="network-footer">
+                        <span>3 SPECIALISTS SELECTED</span>
+                        <strong>EST. $12.00</strong>
+                    </div>
+
+                </div>
+
+                <div class="floating-badge badge-top">
+                    <span>✦</span> AI powered orchestration
+                </div>
+
+                <div class="floating-badge badge-bottom">
+                    <span>✓</span> Transparent pricing
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="stats-section">
+            <div class="stat">
+                <strong>01</strong>
+                <span>One project request</span>
+            </div>
+
+            <div class="stat">
+                <strong>AI</strong>
+                <span>Intelligent planning</span>
+            </div>
+
+            <div class="stat">
+                <strong>∞</strong>
+                <span>Possibilities to build</span>
+            </div>
+
+            <div class="stat">
+                <strong>PAY</strong>
+                <span>Secure checkout</span>
+            </div>
+        </section>
+
+        <section class="marketplace-section" id="marketplace">
+
+            <div class="section-heading">
+                <div>
+                    <span class="section-label">THE MARKETPLACE</span>
+                    <h2>Meet your specialists.</h2>
+                    <p>Different minds. Different skills. One coordinated team.</p>
+                </div>
+
+                <a href="#workspace" class="text-link">Build your team ↗</a>
+            </div>
+
+            <div class="agent-grid">
+
+                <article class="market-agent-card">
+                    <div class="card-top">
+                        <div class="agent-avatar analyst large">DA</div>
+                        <span class="availability">● AVAILABLE</span>
+                    </div>
+                    <h3>Data Analyst</h3>
+                    <p>Transforms raw information into meaningful insights, patterns and actionable findings.</p>
+                    <div class="card-bottom">
+                        <span>DATA ANALYSIS</span>
+                        <strong>$5.00 <small>/ task</small></strong>
+                    </div>
+                </article>
+
+                <article class="market-agent-card">
+                    <div class="card-top">
+                        <div class="agent-avatar visualizer large">VS</div>
+                        <span class="availability">● AVAILABLE</span>
+                    </div>
+                    <h3>Visualization Specialist</h3>
+                    <p>Turns complex data into clear charts, visual stories and understandable dashboards.</p>
+                    <div class="card-bottom">
+                        <span>VISUALIZATION</span>
+                        <strong>$3.00 <small>/ task</small></strong>
+                    </div>
+                </article>
+
+                <article class="market-agent-card">
+                    <div class="card-top">
+                        <div class="agent-avatar writer large">RW</div>
+                        <span class="availability">● AVAILABLE</span>
+                    </div>
+                    <h3>Report Writer</h3>
+                    <p>Creates structured reports with explanations, conclusions and recommendations.</p>
+                    <div class="card-bottom">
+                        <span>REPORT GENERATION</span>
+                        <strong>$4.00 <small>/ task</small></strong>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+        <section class="how-section" id="how-it-works">
+
+            <span class="section-label">THE PROCESS</span>
+            <h2>From idea to execution.</h2>
+
+            <div class="process-grid">
+
+                <div class="process-card">
+                    <span class="process-number">01</span>
+                    <h3>Describe</h3>
+                    <p>Tell TASKWEAVE what you want to accomplish.</p>
+                </div>
+
+                <div class="process-card">
+                    <span class="process-number">02</span>
+                    <h3>Orchestrate</h3>
+                    <p>AI creates a workflow and assigns specialist agents.</p>
+                </div>
+
+                <div class="process-card">
+                    <span class="process-number">03</span>
+                    <h3>Approve & Pay</h3>
+                    <p>Review the task breakdown and quote before checkout.</p>
+                </div>
+
+                <div class="process-card">
+                    <span class="process-number">04</span>
+                    <h3>Receive</h3>
+                    <p>Track execution and receive the completed deliverables.</p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="workspace-cta" id="workspace">
+            <div>
+                <span class="section-label">YOUR NEXT PROJECT STARTS HERE</span>
+                <h2>Stop doing everything alone.</h2>
+                <p>Give your next idea a team of specialist AI agents.</p>
+            </div>
+
+            <button class="primary-button" id="startProject">
+                Launch Workspace <span>↗</span>
+            </button>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <a href="#" class="logo">TASK<span>WEAVE</span><span class="logo-dot">.</span></a>
+        <p>© 2026 TASKWEAVE. An AI Agent Economy.</p>
+        <span>Built for the future of work.</span>
+    </footer>
+
+</body>
+</html>

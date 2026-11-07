@@ -1,0 +1,243 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Workspace | TASKWEAVE</title>
+    <link rel="stylesheet" href="{% static 'agents/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'agents/css/workspace.css' %}">
+    <script src="{% static 'agents/js/theme.js' %}" defer></script>
+    <script src="{% static 'agents/js/workspace.js' %}" defer></script>
+</head>
+<body class="workspace-body">
+
+    <header class="navbar workspace-navbar">
+        <a href="/" class="logo">TASK<span>WEAVE</span><span class="logo-dot">.</span></a>
+
+        <div class="workspace-nav-center">
+            <span class="workspace-indicator"></span>
+            PROJECT WORKSPACE
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+            <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">☾ Dark mode</button>
+            <a href="/" class="nav-button">← Back to Home</a>
+        </div>
+    </header>
+
+    <main class="workspace-container">
+
+        <div class="workspace-heading">
+            <span class="section-label">NEW PROJECT</span>
+            <h1>What are we <span class="gradient-text">building today?</span></h1>
+            <p>Describe your goal. Our AI orchestrator will assemble the right team of specialists.</p>
+        </div>
+
+        <div class="workspace-layout">
+
+            <section class="project-form-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-step">STEP 01</span>
+                        <h2>Project details</h2>
+                    </div>
+                    <span class="panel-icon">✦</span>
+                </div>
+
+                <form id="projectForm">
+                    {% csrf_token %}
+
+                    <label for="projectTitle">PROJECT TITLE</label>
+                    <input
+                        type="text"
+                        id="projectTitle"
+                        placeholder="e.g. Monthly Sales Analysis"
+                        maxlength="120"
+                        required
+                    >
+
+                    <label for="projectDescription">DESCRIBE YOUR PROJECT</label>
+                    <textarea
+                        id="projectDescription"
+                        placeholder="Describe what you want to accomplish. Be as specific as possible...
+
+Example:
+Analyze my monthly sales data, identify revenue trends, create visualizations and prepare a comprehensive business report."
+                        rows="9"
+                        maxlength="5000"
+                        required
+                    ></textarea>
+
+                    <div class="input-footer">
+                        <span>Be specific for better task planning.</span>
+                        <span id="charCount">0 / 5000</span>
+                    </div>
+
+                    <label for="projectBudget">YOUR MAXIMUM BUDGET <span>(OPTIONAL)</span></label>
+
+                    <div class="budget-input">
+                        <span>$</span>
+                        <input
+                            type="number"
+                            id="projectBudget"
+                            placeholder="Enter budget in USD"
+                            min="0.01"
+                            step="0.01"
+                        >
+                        <span class="currency-label">USD</span>
+                    </div>
+
+                    <div class="form-notice">
+                        <span>ⓘ</span>
+                        Your budget is a spending limit, not a payment. You'll review the final quote before approving anything.
+                    </div>
+
+                    <button type="submit" class="generate-button" id="generateButton">
+                        <span>✦</span>
+                        Generate AI Task Plan
+                        <span class="button-arrow">↗</span>
+                    </button>
+
+                    <p class="secure-note">No payment will be made at this stage.</p>
+
+                </form>
+
+            </section>
+
+            <aside class="workspace-sidebar">
+
+                <div class="sidebar-panel">
+                    <span class="section-label">HOW IT WORKS</span>
+                    <h3>Your idea becomes a workflow.</h3>
+
+                    <div class="workflow-list">
+
+                        <div class="workflow-step active">
+                            <div class="workflow-number">01</div>
+                            <div>
+                                <strong>Describe your project</strong>
+                                <p>Tell us what you need.</p>
+                            </div>
+                        </div>
+
+                        <div class="workflow-connector"></div>
+
+                        <div class="workflow-step">
+                            <div class="workflow-number">02</div>
+                            <div>
+                                <strong>AI creates a plan</strong>
+                                <p>Tasks are assigned to specialists.</p>
+                            </div>
+                        </div>
+
+                        <div class="workflow-connector"></div>
+
+                        <div class="workflow-step">
+                            <div class="workflow-number">03</div>
+                            <div>
+                                <strong>Review the quote</strong>
+                                <p>Check tasks and estimated cost.</p>
+                            </div>
+                        </div>
+
+                        <div class="workflow-connector"></div>
+
+                        <div class="workflow-step">
+                            <div class="workflow-number">04</div>
+                            <div>
+                                <strong>Approve and execute</strong>
+                                <p>Pay securely and start execution.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="sidebar-panel specialist-panel">
+                    <span class="section-label">AVAILABLE SPECIALISTS</span>
+                    <h3>Your agent network</h3>
+
+                    <div class="specialist-item">
+                        <div class="agent-avatar analyst">DA</div>
+                        <div>
+                            <strong>Data Analyst</strong>
+                            <small>Data Analysis</small>
+                        </div>
+                        <span>$5</span>
+                    </div>
+
+                    <div class="specialist-item">
+                        <div class="agent-avatar visualizer">VS</div>
+                        <div>
+                            <strong>Visualization Specialist</strong>
+                            <small>Data Visualization</small>
+                        </div>
+                        <span>$3</span>
+                    </div>
+
+                    <div class="specialist-item">
+                        <div class="agent-avatar writer">RW</div>
+                        <div>
+                            <strong>Report Writer</strong>
+                            <small>Report Generation</small>
+                        </div>
+                        <span>$4</span>
+                    </div>
+
+                    <p class="specialist-footnote">Example prices · Final pricing is calculated by the backend.</p>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <!-- Generated plan results -->
+        <section class="plan-results" id="planResults" hidden>
+
+            <div class="results-heading">
+                <div>
+                    <span class="section-label">AI GENERATED WORKFLOW</span>
+                    <h2>Your project plan</h2>
+                    <p id="planSummary"></p>
+                </div>
+
+                <span class="draft-badge" id="planStatus">DRAFT PLAN</span>
+            </div>
+
+            <div id="requirementList" class="requirement-list"></div>
+            <div id="taskList" class="task-list"></div>
+
+            <div class="quote-panel">
+                <div>
+                    <span>ESTIMATED PROJECT COST</span>
+                    <strong id="planTotal">$0.00</strong>
+                </div>
+
+                <p>Review the assignments and pricing before approving this plan.</p>
+            </div>
+
+            <!-- Plan approval controls -->
+            <div class="approval-actions">
+                <button type="button" id="approvePlanButton">Approve Plan</button>
+                <button type="button" id="rejectPlanButton">Reject Plan</button>
+                <button type="button" id="payPlanButton" hidden>Continue to PayPal Sandbox</button>
+            </div>
+
+            <p id="approvalMessage" role="status" aria-live="polite"></p>
+            <p class="secure-note">Payment is processed in PayPal Sandbox only. TASKWEAVE does not charge real money.</p>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <a href="/" class="logo">TASK<span>WEAVE</span><span class="logo-dot">.</span></a>
+        <p>© 2026 TASKWEAVE. AI Agent Economy.</p>
+        <span>Plan intelligently. Execute confidently.</span>
+    </footer>
+
+</body>
+</html>
